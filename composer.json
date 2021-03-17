@@ -1,0 +1,18 @@
+{
+    "name": "xanweb/c5-request",
+    "description": "Concrete5 Request Utility",
+    "keywords": ["concrete5", "concrete5-v8", "library"],
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Xanweb\\C5\\Request\\": ""
+        }
+    },
+    "support": {
+        "source": "https://github.com/xanweb/c5-request"
+    }
+}

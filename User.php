@@ -1,4 +1,5 @@
 <?php
+
 namespace Xanweb\C5\Request;
 
 use Concrete\Core\User\User as ConcreteUser;
@@ -30,12 +31,12 @@ class User
     /**
      * @var UserInfo
      */
-    private $ui;
+    private UserInfo $ui;
 
     /**
      * @var array
      */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct()
     {
@@ -56,11 +57,7 @@ class User
             return null;
         }
 
-        if (!isset($ru->ui)) {
-            $ru->ui = $ru->user->getUserInfoObject();
-        }
-
-        return $ru->ui;
+        return $ru->ui ?? $ru->ui = $ru->user->getUserInfoObject();
     }
 
     public static function getAttribute($ak, $mode = false)

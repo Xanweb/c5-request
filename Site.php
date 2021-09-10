@@ -24,16 +24,26 @@ class Site
     /**
      * @var array
      */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct()
     {
         $this->site = $this->app('site')->getSite();
     }
 
+    public static function urlToDefaultLocaleHome(): ?URLInterface
+    {
+        $rs = self::get();
+
+        return $rs->cache['urlToDefaultLocaleHome'] ?? $rs->cache['urlToDefaultLocaleHome'] = Url::to(static::getSiteHomePageObject());
+    }
+
+    /**
+     * @deprecated Use urlToDefaultLocaleHome()
+     */
     public static function getSiteHomePageURL(): ?URLInterface
     {
-        return Url::to(static::getSiteHomePageObject());
+        return self::urlToDefaultLocaleHome();
     }
 
     public static function getSiteHomePageObject(): ?ConcretePage
@@ -56,9 +66,19 @@ class Site
         return $rs->cache['siteHomePageID'] ?? $rs->cache['siteHomePageID'] = (int) $rs->site->getSiteHomePageID();
     }
 
+    public static function urlToHome(): ?URLInterface
+    {
+        $rs = self::get();
+
+        return $rs->cache['urlToHome'] ?? $rs->cache['urlToHome'] = Url::to(static::getLocaleHomePageObject());
+    }
+
+    /**
+     * @deprecated Use urlToHome()
+     */
     public static function getLocaleHomePageURL(): ?URLInterface
     {
-        return Url::to(static::getLocaleHomePageObject());
+        return self::urlToHome();
     }
 
     public static function getLocaleHomePageObject(): ?ConcretePage
@@ -108,11 +128,8 @@ class Site
     public static function getAttribute($ak, $mode = false)
     {
         $rs = self::get();
-        if ($rs->site === null) {
-            return null;
-        }
 
-        return self::_getAttribute($rs->site, $ak, $mode);
+        return ($rs->site !== null) ? self::_getAttribute($rs->site, $ak, $mode) : null;
     }
 
     public function __call($name, $arguments)

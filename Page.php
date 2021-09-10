@@ -5,10 +5,20 @@ namespace Xanweb\C5\Request;
 use Concrete\Core\Http\Request;
 use Concrete\Core\Localization\Localization;
 use Concrete\Core\Multilingual\Page\Section\Section;
+use Concrete\Core\Support\Facade\Url;
+use League\Url\UrlInterface;
 use Xanweb\Common\Traits\ApplicationTrait;
 use Xanweb\Common\Traits\SingletonTrait;
 use Xanweb\C5\Request\Traits\AttributesTrait;
 
+/**
+ * @method static string getCollectionName()
+ * @method static string getCollectionDescription()
+ * @method static string getCollectionPath()
+ * @method static string getCollectionDatePublic()
+ * @method static \DateTime|null getCollectionDatePublicObject()
+ * @method static string getCollectionDateLastModified()
+ */
 class Page
 {
     use ApplicationTrait;
@@ -23,11 +33,22 @@ class Page
     /**
      * @var array
      */
-    private $cache = [];
+    private array $cache = [];
 
     public function __construct()
     {
         $this->request = $this->app(Request::class);
+    }
+
+    public function url(): ?URLInterface
+    {
+        $rp = self::get();
+        $c = $rp->request->getCurrentPage();
+        if ($c !== null) {
+            return $rp->cache['url'] ?? $rp->cache['url'] = Url::to($c);
+        }
+
+        return null;
     }
 
     public static function getLocale(): string
@@ -57,13 +78,9 @@ class Page
 
     public static function getAttribute($ak, $mode = false)
     {
-        $rp = self::get();
-        $c = $rp->request->getCurrentPage();
-        if ($c === null) {
-            return null;
-        }
+        $c = self::get()->request->getCurrentPage();
 
-        return self::_getAttribute($c, $ak, $mode);
+        return ($c !== null) ? self::_getAttribute($c, $ak, $mode) : null;
     }
 
     public function __call($name, $arguments)

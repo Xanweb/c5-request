@@ -5,6 +5,7 @@ namespace Xanweb\C5\Request;
 use Concrete\Core\Http\Request;
 use Concrete\Core\Localization\Localization;
 use Concrete\Core\Multilingual\Page\Section\Section;
+use Concrete\Core\Page\Page as ConcretePage;
 use Concrete\Core\Support\Facade\Url;
 use League\Url\UrlInterface;
 use Xanweb\Common\Traits\ApplicationTrait;
@@ -25,15 +26,8 @@ class Page
     use AttributesTrait;
     use SingletonTrait;
 
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var array
-     */
-    private array $cache = [];
+    private Request $request;
+    protected array $cache = [];
 
     public function __construct()
     {
@@ -42,10 +36,9 @@ class Page
 
     public function url(): ?URLInterface
     {
-        $rp = self::get();
-        $c = $rp->request->getCurrentPage();
+        $c = self::getConcretePage();
         if ($c !== null) {
-            return $rp->cache['url'] ?? $rp->cache['url'] = Url::to($c);
+            return self::get()->cache['url'] ??= Url::to($c);
         }
 
         return null;
@@ -73,12 +66,12 @@ class Page
     {
         $rp = self::get();
 
-        return $rp->cache['isEditMode'] ?? ($rp->cache['isEditMode'] = (($c = $rp->request->getCurrentPage()) !== null && $c->isEditMode()));
+        return $rp->cache['isEditMode'] ??= (($c = self::getConcretePage()) !== null && $c->isEditMode());
     }
 
     public static function getAttribute($ak, $mode = false)
     {
-        $c = self::get()->request->getCurrentPage();
+        $c = self::getConcretePage();
 
         return ($c !== null) ? self::_getAttribute($c, $ak, $mode) : null;
     }
@@ -94,5 +87,15 @@ class Page
     public static function __callStatic($name, $arguments)
     {
         return self::get()->$name(...$arguments);
+    }
+
+    /**
+     * Get Current Page Object.
+     *
+     * @return ConcretePage|null
+     */
+    protected static function getConcretePage(): ?ConcretePage
+    {
+        return self::get()->request->getCurrentPage();
     }
 }

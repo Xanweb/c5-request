@@ -23,20 +23,9 @@ class User
     use AttributesTrait;
     use SingletonTrait;
 
-    /**
-     * @var ConcreteUser
-     */
-    private $user;
-
-    /**
-     * @var UserInfo
-     */
+    protected array $cache = [];
+    protected ConcreteUser $user;
     private UserInfo $ui;
-
-    /**
-     * @var array
-     */
-    private array $cache = [];
 
     public function __construct()
     {
@@ -47,7 +36,7 @@ class User
     {
         $ru = self::get();
 
-        return $ru->cache['canAccessDashboard'] ?? ($ru->cache['canAccessDashboard'] = ($ru->user->isRegistered() && $ru->app('helper/concrete/dashboard')->canRead()));
+        return $ru->cache['canAccessDashboard'] ??= ($ru->user->isRegistered() && $ru->app('helper/concrete/dashboard')->canRead());
     }
 
     public static function getUserInfoObject(): ?UserInfo
@@ -57,7 +46,7 @@ class User
             return null;
         }
 
-        return $ru->ui ?? $ru->ui = $ru->user->getUserInfoObject();
+        return $ru->ui ??= $ru->user->getUserInfoObject();
     }
 
     public static function getAttribute($ak, $mode = false)

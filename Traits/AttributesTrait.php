@@ -14,7 +14,7 @@ trait AttributesTrait
 
         $inst = self::get();
         if (!isset($inst->cache[$cacheKey]) || !array_key_exists($modeKey, $inst->cache[$cacheKey])) {
-            $inst->cache[$cacheKey] = $inst->cache[$cacheKey] ?? [];
+            $inst->cache[$cacheKey] ??= [];
             $inst->cache[$cacheKey][$modeKey] = $obj->getAttribute($ak, $mode);
         }
 

@@ -2,6 +2,7 @@
 
 namespace Xanweb\C5\Request;
 
+use Concrete\Core\Entity\Site\Site as ConcreteSite;
 use Concrete\Core\Page\Page as ConcretePage;
 use Concrete\Core\Support\Facade\Url;
 use League\URL\URLInterface;
@@ -16,15 +17,8 @@ class Site
     use AttributesTrait;
     use SingletonTrait;
 
-    /**
-     * @var \Concrete\Core\Entity\Site\Site
-     */
-    private $site;
-
-    /**
-     * @var array
-     */
-    private array $cache = [];
+    protected array $cache = [];
+    protected ?ConcreteSite $site;
 
     public function __construct()
     {
@@ -35,7 +29,7 @@ class Site
     {
         $rs = self::get();
 
-        return $rs->cache['urlToDefaultLocaleHome'] ?? $rs->cache['urlToDefaultLocaleHome'] = Url::to(static::getSiteHomePageObject());
+        return $rs->cache['urlToDefaultLocaleHome'] ??= Url::to(static::getSiteHomePageObject());
     }
 
     /**
@@ -63,14 +57,14 @@ class Site
     {
         $rs = self::get();
 
-        return $rs->cache['siteHomePageID'] ?? $rs->cache['siteHomePageID'] = (int) $rs->site->getSiteHomePageID();
+        return $rs->cache['siteHomePageID'] ??= (int) $rs->site->getSiteHomePageID();
     }
 
-    public static function urlToHome(): ?URLInterface
+    public static function urlToHome(): URLInterface
     {
         $rs = self::get();
 
-        return $rs->cache['urlToHome'] ?? $rs->cache['urlToHome'] = Url::to(static::getLocaleHomePageObject());
+        return $rs->cache['urlToHome'] ??= Url::to(static::getLocaleHomePageObject() ?? '');
     }
 
     /**
@@ -122,7 +116,7 @@ class Site
     {
         $rs = self::get();
 
-        return $rs->cache['siteName'] ?? $rs->cache['siteName'] = $rs->site->getSiteName();
+        return $rs->cache['siteName'] ??= $rs->site->getSiteName();
     }
 
     public static function getAttribute($ak, $mode = false)

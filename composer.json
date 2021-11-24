@@ -1,6 +1,6 @@
 {
     "name": "xanweb/c5-request",
-    "description": "Concrete5 Request Utility",
+    "description": "ConcreteCMS Request Utility",
     "keywords": ["ConcreteCMS", "concrete5", "concrete5-v8", "concrete5-v9", "library"],
     "type": "library",
     "license": "MIT",
